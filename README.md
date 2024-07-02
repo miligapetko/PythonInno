@@ -10,5 +10,9 @@ This workshop should be able to
 Details of the workshop
 - 
 20 minutes
+
+
 Room separated by SAS-coded and Python-coded excercises
+
+
 The narrative is that each team explores a "what if" scenario
