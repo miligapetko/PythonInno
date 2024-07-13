@@ -7,11 +7,9 @@ Step 1: Importing our Data
 
  ******************************************************************************/
 
-/* Import CSV file */
+/****** Import file ******/
 proc import datafile = "/workspaces/myfolder/PythonInno/bank.csv"
-            out = bank
-            dbms = csv
-            replace;
+            out = bank dbms = csv replace;
             guessingrows=30;
 run;
 
@@ -22,52 +20,54 @@ Step 2: Exploratory Data Analysis (EDA)
  ******************************************************************************/
 
 /* View the structure and metadata of the dataset */
+footnote italic '*Note that Activity_Status and Customer_Value are Char types- might have to encode.';
 ods select Variables;
 proc contents data=bank;
 run;
 ods select default;
+footnote;
 
-/* List first 10 rows */
+/* Print first 10 rows */
 title "First 10 rows of dataset";
 proc print data=bank (obs=10);
 run;
 title;
 
 /* Calculate summary statistics */
+title "Summary statistics of Bank";
+footnote italic '*Note that there are missing data in Age and AvgSale3Yr_DP.';
 proc means data=bank;
 run;
-
-*Note that there are missing data in Age and AvgSale3Yr_DP;
+footnote;
+title;
 
 /* Finding data imbalance */
 proc freq data=bank;
     tables Status / out=freq_status;
 run;
 
+footnote italic '*Note that data is heavily imbalanced.';
 proc sgplot data=freq_status;
     vbar Status / response=Count stat=sum;
     xaxis label='Status';
     yaxis label='Frequency';
     title 'Frequency Distribution of Status';
 run;
+footnote;
 
 /* Calculate the frequency of each unique value in MnthsLastPur */
 proc freq data=bank noprint;
     tables MnthsLastPur / out=freq_mlp;
 run;
 
+footnote italic '*Note that most customers wait 15-21 months before purchasing again.'
 proc sgplot data=freq_mlp;
     vbar MnthsLastPur / response=Count stat=sum;
     xaxis label='Months Since Last Purchase';
     yaxis label='Frequency';
     title 'Frequency Distribution of Months Since Last Purchase';
 run;
-
-/* Compute the correlation matrix */
-/* NOT COMPLETE YET!!!!!!!!!!!!! */
-proc corr data=bank noprob nosimple;
-    var _numeric_;
-run;
+footnote;
 
 
 /* Graph for Customer Value Groups by Activity Status */
@@ -95,13 +95,17 @@ data avg_sale_life_per_customer;
     AvgSaleLifePerCustomer = TotalSum / Count;
 run;
 
+footnote italic "We find that the cutsomer value groups help represent how these 
+cutsomers contribute to the firm's sales. Those with high activity 
+(buy more often), tend to spend less in their lifetime than those who have an 
+average or low activityty status.";
 proc sgplot data=avg_sale_life_per_customer;
     vbar Activity_Status / response=AvgSaleLifePerCustomer;
     xaxis label='Activity Status';
     yaxis label='AvgSaleLife per Customer';
     title 'Proportionate AvgSaleLife per Customer by Activity Status';
 run;
-
+footnote;
 
 /******************************************************************************
 
@@ -109,7 +113,7 @@ Step 3: Data Wrangling
 
  ******************************************************************************/
 
- /* Imputation */
+ /****** Imputation ******/
  /* Step 1: Calculate the mean for the numeric columns Age and AvgSale3Yr_DP */
 proc means data=bank noprint;
    var Age AvgSale3Yr_DP;
@@ -125,8 +129,7 @@ data bank_modified;
    if missing(AvgSale3Yr_DP) then AvgSale3Yr_DP = mean_AvgSale3Yr_DP;
 run;
 
-/* Label Encoding */
-/* Step 1: Define formats for encoding labels */
+/****** Label Encoding ******/
 proc format;
     value $activityfmt
         'High' = '1'
@@ -141,33 +144,30 @@ proc format;
         'E' = '5';
 run;
 
-/* Step 2: Apply formats to the dataset */
 data bank_modified;
-    set bank_modified; /* Read in the original dataset */
-    
-    /* Apply formats to encode labels */
+    set bank_modified;
     format Activity_Status $activityfmt. Customer_Value $custfmt.;
 run;
 
 
-/* Train/Test Split */
-/* Split the dataset into training (80%) and testing (20%) */
-proc surveyselect data=bank_modified 
-                  out=train_test_split 
-                  samprate=0.80 
-                  outall 
-                  seed=42;
+/****** Train/Test Split ******/
+title2 'Create training and test data sets with the PARTITION procedure';
+proc partition data=bank_modified seed=42
+   partind samppct=80;
+   output out=bank_modified_part;
 run;
 
-/* Create separate datasets for training and testing */
-data train test;
-    set train_test_split;
-    if Selected then output train; /* Selected = 1 for training set */
-    else output test; /* Selected = 0 for testing set */
+data bank_train(drop=_partind_);
+   set bank_modified_part(where=(_partind_=1));
 run;
 
-proc print data=bank_modified (obs=20);
+data bank_test(drop=_partind_);
+   set bank_modified_part(where=(_partind_~=1));
 run;
+
+/* Check if ok
+proc print data=bank_train (obs=10);
+run; */
 
 
 /******************************************************************************
@@ -175,6 +175,54 @@ run;
 Step 4: Modelling
 
  ******************************************************************************/
+
+ /****** Training a Random Forest Model ******/
+title2 'Random Forest on bank_train data';
+proc forest data=bank_train ntrees=100 seed=42;
+    target Status / level=interval;
+    input Activity_Status Customer_Value Home_Flag / level=nominal;
+    input Age Homeval Inc Pr AvgSale3Yr AvgSaleLife	AvgSale3Yr_DP LastProdAmt
+        CntPur3Yr CntPurLife CntPur3Yr_DP CntPurLife_DP	CntTotPromo	MnthsLastPur
+        Cnt1Yr_DP CustTenure / level=interval;
+        id AccountID; /* saves id variable against each prediction- for later matching */
+    savestate rstore=foreststore; /*saves the state of proc forest */
+run;
+title2;
+
+/****** use the ASTORE to score the test data and save the result ******/
+title2 'ASTORE describe and scoring';
+proc astore;
+    describe rstore=foreststore;
+    score data=bank_test rstore=foreststore
+          out=bank_scoreout;
+run;
+title2;
+
+/****** Comparing predictions against actual values ******/
+proc print data=bank_scoreout(obs=10);
+run;
+
+proc print data=bank_test (obs=10);
+run;
+
+/****** Saving ASTORE file ******/
+title2 'Saving the astore into a file';
+proc astore;
+    download rstore=foreststore store="/tmp/foreststore.sasast";
+run;
+
+/******************************************************************************
+
+ The example showed how we can perform SAS® Viya® analytic processes without a
+ separate cloud-based server. It also demonstrated the use of saving analytic
+ stores into files that can be used by any other product that supports them.
+ As a result, a user can use SAS® Viya® Workbench to quickly try out ideas by
+ building and testing models, which can then be saved for use in other
+ environments as needed.
+
+ ******************************************************************************/
+
+
 
  /* Gradient Boosting */
  proc gradboost data=train ntrees=100;
