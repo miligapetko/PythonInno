@@ -199,17 +199,40 @@ run;
 title2;
 
 /****** Comparing predictions against actual values ******/
+title2 'Model Predictions for first 10 Observations';
 proc print data=bank_scoreout(obs=10);
 run;
+title2;
 
+
+title2 'Actual Values of first 10 obeservations';
 proc print data=bank_test (obs=10);
 run;
+title2;
 
-/****** Saving ASTORE file ******/
+/****** Saving model as ASTORE file ******/
 title2 'Saving the astore into a file';
 proc astore;
-    download rstore=foreststore store="/tmp/foreststore.sasast";
+    download rstore=foreststore store="foreststore.sasast";
 run;
+title2;
+
+
+/****** Replicating model and Re-Scoring ******/
+title2 'Reloading the astore and scoring it';
+proc astore;
+    upload rstore=foreststore2 store="foreststore.sasast";
+    describe rstore=foreststore2;
+    score data=bank_test rstore=foreststore2 out=bank_scoreout2;
+run;
+title2;
+
+
+title2 'Model Predictions for first 5 Observations- re-score';
+proc print data=bank_scoreout2(obs=5);
+run;
+title2;
+
 
 /******************************************************************************
 
@@ -225,11 +248,33 @@ run;
 
 
  /* Gradient Boosting */
- proc gradboost data=train ntrees=100;
+proc gradboost data=bank_train ntrees=100;
+    target Status / level=interval;
+    input Activity_Status Customer_Value Home_Flag / level=nominal;
     input Age Homeval Inc Pr AvgSale3Yr AvgSaleLife	AvgSale3Yr_DP LastProdAmt
         CntPur3Yr CntPurLife CntPur3Yr_DP CntPurLife_DP	CntTotPromo	MnthsLastPur
-        Cnt1Yr_DP CustTenure / level=nominal;
-    input Activity_Status Customer_Value Home_Flag / level=interval;
-    target Status / level=interval;
-    seed=42;
+        Cnt1Yr_DP CustTenure / level=interval;
+        id AccountID; /* saves id variable against each prediction- for later matching */
+    savestate rstore=gbstore; /*saves the state of proc forest */
  run;
+
+ /****** use the ASTORE to score the test data and save the result ******/
+title2 'ASTORE describe and scoring';
+proc astore;
+    describe rstore=gbstore;
+    score data=bank_test rstore=gbstore
+          out=bank_scoreout;
+run;
+title2;
+
+/****** Comparing predictions against actual values ******/
+title2 'Model Predictions for first 10 Observations';
+proc print data=bank_scoreout(obs=10);
+run;
+title2;
+
+
+title2 'Actual Values of first 10 obeservations';
+proc print data=bank_test (obs=10);
+run;
+title2;
