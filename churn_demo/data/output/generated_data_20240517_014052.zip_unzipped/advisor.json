@@ -1,0 +1,207 @@
+{
+    "variables": [
+        {
+            "name": "ID",
+            "role": "INPUT",
+            "level": "INTERVAL",
+            "comment": "",
+            "precision": 0
+        },
+        {
+            "name": "DemHomeOwner",
+            "role": "INPUT",
+            "level": "NOMINAL",
+            "comment": "",
+            "precision": null
+        },
+        {
+            "name": "LostCustomer",
+            "role": "INPUT",
+            "level": "NOMINAL",
+            "comment": "",
+            "precision": null
+        },
+        {
+            "name": "regionPctCustomers",
+            "role": "INPUT",
+            "level": "INTERVAL",
+            "comment": "",
+            "precision": 0
+        },
+        {
+            "name": "numOfTotalReturns",
+            "role": "INPUT",
+            "level": "NOMINAL",
+            "comment": "",
+            "precision": null
+        },
+        {
+            "name": "wksSinceLastPurch",
+            "role": "INPUT",
+            "level": "INTERVAL",
+            "comment": "",
+            "precision": 0
+        },
+        {
+            "name": "customerGender",
+            "role": "INPUT",
+            "level": "NOMINAL",
+            "comment": "",
+            "precision": null
+        },
+        {
+            "name": "basktPurchCount12Month",
+            "role": "INPUT",
+            "level": "NOMINAL",
+            "comment": "",
+            "precision": null
+        },
+        {
+            "name": "LastPurchaseAmount",
+            "role": "REJECTED",
+            "level": "NOMINAL",
+            "comment": "The variable exceeds the maximum number of levels.",
+            "precision": null
+        },
+        {
+            "name": "AvgPurchaseAmount12",
+            "role": "REJECTED",
+            "level": "NOMINAL",
+            "comment": "The variable exceeds the maximum number of levels.",
+            "precision": null
+        },
+        {
+            "name": "AvgPurchaseAmountTotal",
+            "role": "REJECTED",
+            "level": "NOMINAL",
+            "comment": "The variable exceeds the maximum number of levels.",
+            "precision": null
+        },
+        {
+            "name": "EstimatedIncome",
+            "role": "REJECTED",
+            "level": "NOMINAL",
+            "comment": "The variable exceeds the maximum number of levels.",
+            "precision": null
+        },
+        {
+            "name": "regionMedHomeVal",
+            "role": "REJECTED",
+            "level": "NOMINAL",
+            "comment": "The variable exceeds the maximum number of levels.",
+            "precision": null
+        },
+        {
+            "name": "intAdExposureCount12",
+            "role": "INPUT",
+            "level": "INTERVAL",
+            "comment": "",
+            "precision": 0
+        },
+        {
+            "name": "intAdExposureCount36",
+            "role": "INPUT",
+            "level": "INTERVAL",
+            "comment": "",
+            "precision": 0
+        },
+        {
+            "name": "intAdExposureCountAll",
+            "role": "INPUT",
+            "level": "INTERVAL",
+            "comment": "",
+            "precision": 0
+        },
+        {
+            "name": "customerSubscrStat",
+            "role": "INPUT",
+            "level": "NOMINAL",
+            "comment": "",
+            "precision": null
+        },
+        {
+            "name": "socialMediaAdCount12",
+            "role": "INPUT",
+            "level": "NOMINAL",
+            "comment": "",
+            "precision": null
+        },
+        {
+            "name": "socialMediaAdCount36",
+            "role": "INPUT",
+            "level": "INTERVAL",
+            "comment": "",
+            "precision": 0
+        },
+        {
+            "name": "socialMediaAdCountAll",
+            "role": "INPUT",
+            "level": "INTERVAL",
+            "comment": "",
+            "precision": 0
+        },
+        {
+            "name": "totalNumProdPurchased",
+            "role": "INPUT",
+            "level": "INTERVAL",
+            "comment": "",
+            "precision": 0
+        },
+        {
+            "name": "custInitiatedContacts",
+            "role": "INPUT",
+            "level": "NOMINAL",
+            "comment": "",
+            "precision": null
+        },
+        {
+            "name": "CustomerAge",
+            "role": "REJECTED",
+            "level": "NOMINAL",
+            "comment": "The variable exceeds the maximum number of levels.",
+            "precision": null
+        },
+        {
+            "name": "avgDiscountValue12",
+            "role": "REJECTED",
+            "level": "NOMINAL",
+            "comment": "The variable exceeds the maximum number of levels.",
+            "precision": null
+        },
+        {
+            "name": "customersales",
+            "role": "REJECTED",
+            "level": "NOMINAL",
+            "comment": "The variable exceeds the maximum number of levels.",
+            "precision": null
+        },
+        {
+            "name": "techSupportEval",
+            "role": "INPUT",
+            "level": "NOMINAL",
+            "comment": "",
+            "precision": null
+        },
+        {
+            "name": "wksSinceFirstPurch",
+            "role": "INPUT",
+            "level": "INTERVAL",
+            "comment": "",
+            "precision": 0
+        },
+        {
+            "name": "Review_Text",
+            "role": "REJECTED",
+            "level": "NOMINAL",
+            "comment": "The variable exceeds the maximum percentage of missing.",
+            "precision": null
+        },
+        {
+            "name": "Title",
+            "role": "REJECTED",
+            "level": "NOMINAL",
+            "comment": "The variable exceeds the maximum percentage of missing.",
+            "precision": null
+        }
+    ]
+}

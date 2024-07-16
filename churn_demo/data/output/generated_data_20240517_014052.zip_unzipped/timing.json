@@ -1,0 +1,102 @@
+{
+    "stamps": [
+        {
+            "note": "Start",
+            "stamp": 0.0,
+            "delta": 0.0,
+            "percent": 0.0,
+            "delta_percent": 0.0
+        },
+        {
+            "note": "Main Imports Complete",
+            "stamp": 2.0236918926239014,
+            "delta": 2.0236918926239014,
+            "percent": 33.31,
+            "delta_percent": 33.31
+        },
+        {
+            "note": "Full Config Loaded",
+            "stamp": 2.035022258758545,
+            "delta": 0.011330366134643555,
+            "percent": 33.5,
+            "delta_percent": 0.19
+        },
+        {
+            "note": "Input Data Read",
+            "stamp": 2.0982422828674316,
+            "delta": 0.06322002410888672,
+            "percent": 34.54,
+            "delta_percent": 1.04
+        },
+        {
+            "note": "Advisor Run",
+            "stamp": 2.2319605350494385,
+            "delta": 0.13371825218200684,
+            "percent": 36.74,
+            "delta_percent": 2.2
+        },
+        {
+            "note": "Request Validated",
+            "stamp": 2.2320022583007812,
+            "delta": 0.00004172325134277344,
+            "percent": 36.74,
+            "delta_percent": 0.0
+        },
+        {
+            "note": "Data Generated",
+            "stamp": 2.5430362224578857,
+            "delta": 0.3110339641571045,
+            "percent": 41.86,
+            "delta_percent": 5.12
+        },
+        {
+            "note": "Data Trimmed",
+            "stamp": 2.5500271320343018,
+            "delta": 0.006990909576416016,
+            "percent": 41.98,
+            "delta_percent": 0.12
+        },
+        {
+            "note": "Missing Applied",
+            "stamp": 2.5616612434387207,
+            "delta": 0.011634111404418945,
+            "percent": 42.17,
+            "delta_percent": 0.19
+        },
+        {
+            "note": "Generated Data Written",
+            "stamp": 2.7364513874053955,
+            "delta": 0.1747901439666748,
+            "percent": 45.04,
+            "delta_percent": 2.88
+        },
+        {
+            "note": "Generated Data Summary Written",
+            "stamp": 2.744429349899292,
+            "delta": 0.007977962493896484,
+            "percent": 45.18,
+            "delta_percent": 0.13
+        },
+        {
+            "note": "Input Data Summary Written",
+            "stamp": 2.7512998580932617,
+            "delta": 0.0068705081939697266,
+            "percent": 45.29,
+            "delta_percent": 0.11
+        },
+        {
+            "note": "Assessment Report Generated and Written",
+            "stamp": 6.07503080368042,
+            "delta": 3.323730945587158,
+            "percent": 100.0,
+            "delta_percent": 54.71
+        },
+        {
+            "note": "End",
+            "stamp": 6.075062036514282,
+            "delta": 0.00003123283386230469,
+            "percent": 100.0,
+            "delta_percent": 0.0
+        }
+    ]
+}
