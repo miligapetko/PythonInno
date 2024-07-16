@@ -176,6 +176,22 @@ Step 4: Modelling
 
  ******************************************************************************/
 
+
+/******************************************************************************
+
+ EXAMPLE:     RANDOM FOREST
+ DATA:        bank_train, bank_test
+ DESCRIPTION: This data set contains banking data for customers. The goal is to
+              to analyze if individual customer purchased an insurance product.
+ PURPOSE:     This example shows how to build a regression forest model using
+              the FOREST procedure without the need to use a separate cloud-
+              based server. It also demonstrates the use of analytic stores as a
+              mechanism for saving models and scoring them.
+
+ ******************************************************************************/
+
+
+
  /****** Training a Random Forest Model ******/
 title2 'Random Forest on bank_train data';
 proc forest data=bank_train ntrees=100 seed=42;
@@ -213,7 +229,7 @@ title2;
 /****** Saving model as ASTORE file ******/
 title2 'Saving the astore into a file';
 proc astore;
-    download rstore=foreststore store="foreststore.sasast";
+    download rstore=foreststore store="/workspaces/myfolder/PythonInno/foreststore.sasast";
 run;
 title2;
 
@@ -221,7 +237,7 @@ title2;
 /****** Replicating model and Re-Scoring ******/
 title2 'Reloading the astore and scoring it';
 proc astore;
-    upload rstore=foreststore2 store="foreststore.sasast";
+    upload rstore=foreststore2 store="/workspaces/myfolder/PythonInno/foreststore.sasast";
     describe rstore=foreststore2;
     score data=bank_test rstore=foreststore2 out=bank_scoreout2;
 run;
@@ -245,6 +261,21 @@ title2;
 
  ******************************************************************************/
 
+
+
+/******************************************************************************
+
+ EXAMPLE:     GRADIENT BOOSTING
+ DATA:        bank_train, bank_test
+ DESCRIPTION: This data set contains banking data for customers. The goal is to
+              to analyze if individual customer purchased an insurance product.
+ PURPOSE:     This example shows how to build a gradient boosing model using
+              the GRADBOOST procedure without the need to use a separate cloud-
+              based server. It also demonstrates the ability for the model to be
+              deployed to Model Manager on SAS Viya, ensuring enterprise level
+              deployment and model governance is achieved.
+
+ ******************************************************************************/
 
 
  /* Gradient Boosting */
@@ -276,5 +307,12 @@ title2;
 
 title2 'Actual Values of first 10 obeservations';
 proc print data=bank_test (obs=10);
+run;
+title2;
+
+/****** Saving model as ASTORE file ******/
+title2 'Saving the astore into a file';
+proc astore;
+    download rstore=gbstore store="/workspaces/myfolder/PythonInno/gbstore.sasast";
 run;
 title2;
