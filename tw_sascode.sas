@@ -156,6 +156,7 @@ proc partition data=bank_modified seed=42
    partind samppct=80;
    output out=bank_modified_part;
 run;
+title2;
 
 data bank_train(drop=_partind_);
    set bank_modified_part(where=(_partind_=1));
@@ -168,6 +169,21 @@ run;
 /* Check if ok
 proc print data=bank_train (obs=10);
 run; */
+
+/* ***** Keep only the Status variable in bank_test *****
+data bank_test_status_only;
+    set bank_test(keep=Status);
+run;
+
+proc print data=bank_test_status_only (obs=10);
+run; */
+
+/****** Export bank_test to CSV ******/
+proc export data=bank_test
+            outfile="/workspaces/myfolder/PythonInno/bank_test.csv"
+            dbms=csv
+            replace;
+run;
 
 
 /******************************************************************************
@@ -195,7 +211,7 @@ Step 4: Modelling
  /****** Training a Random Forest Model ******/
 title2 'Random Forest on bank_train data';
 proc forest data=bank_train ntrees=100 seed=42;
-    target Status / level=interval;
+    target Status / level=nominal;
     input Activity_Status Customer_Value Home_Flag / level=nominal;
     input Age Homeval Inc Pr AvgSale3Yr AvgSaleLife	AvgSale3Yr_DP LastProdAmt
         CntPur3Yr CntPurLife CntPur3Yr_DP CntPurLife_DP	CntTotPromo	MnthsLastPur
@@ -280,7 +296,7 @@ title2;
 
  /* Gradient Boosting */
 proc gradboost data=bank_train ntrees=100;
-    target Status / level=interval;
+    target Status / level=nominal;
     input Activity_Status Customer_Value Home_Flag / level=nominal;
     input Age Homeval Inc Pr AvgSale3Yr AvgSaleLife	AvgSale3Yr_DP LastProdAmt
         CntPur3Yr CntPurLife CntPur3Yr_DP CntPurLife_DP	CntTotPromo	MnthsLastPur
@@ -316,3 +332,46 @@ proc astore;
     download rstore=gbstore store="/workspaces/myfolder/PythonInno/gbstore.sasast";
 run;
 title2;
+
+
+/****** Authentication ******/
+/* get token */
+%macro myTokenName() / secure;
+"Bearer eyJqa3UiOiJodHRwczovL2xvY2FsaG9zdC9TQVNMb2dvbi90b2tlbl9rZXlzIiwia2lkIjoibGVnYWN5LXRva2VuLWtleSIsInR5cCI6IkpXVCIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIxYTYzOTMzMi0xMDc2LTQ4ZTAtOTNmZC02OGFlMmNlNmEzYzYiLCJzZXNzaW9uX3NpZyI6IjI1YzIyOTE2LWI4ZTQtNDJiNS1iY2RhLWIzMDEwYzlmOGI3YyIsInVzZXJfbmFtZSI6IlR6dS1XZWkuVHNhaUBzYXMuY29tIiwib3JpZ2luIjoiYXp1cmUiLCJpc3MiOiJodHRwOi8vbG9jYWxob3N0L1NBU0xvZ29uL29hdXRoL3Rva2VuIiwiYXV0aG9yaXRpZXMiOlsiU0FTQWRtaW5pc3RyYXRvcnMiLCJDQVNIb3N0QWNjb3VudFJlcXVpcmVkIiwiRGF0YUJ1aWxkZXJzIl0sImNsaWVudF9pZCI6InNhcy5jbGkiLCJhdWQiOlsic2NpbSIsImNsaWVudHMiLCJ1YWEiLCJvcGVuaWQiLCJzYXMuY2xpIl0sImV4dF9pZCI6ImF2c1ZMdVZ1alF3NnRDa1Y0bU45ZTBXMWFiYlRlMDUzYWlIWDBrMDNsZFkiLCJ6aWQiOiJ1YWEiLCJncmFudF90eXBlIjoiaW1wbGljaXQiLCJ1c2VyX2lkIjoiMWE2MzkzMzItMTA3Ni00OGUwLTkzZmQtNjhhZTJjZTZhM2M2IiwiYXpwIjoic2FzLmNsaSIsInNjb3BlIjpbImNsaWVudHMucmVhZCIsImNsaWVudHMuc2VjcmV0IiwidWFhLnJlc291cmNlIiwiU0FTQWRtaW5pc3RyYXRvcnMiLCJvcGVuaWQiLCJjbGllbnRzLndyaXRlIiwidWFhLmFkbWluIiwiY2xpZW50cy5hZG1pbiIsInNjaW0ud3JpdGUiLCJzY2ltLnJlYWQiLCJ1YWEudXNlciJdLCJhdXRoX3RpbWUiOjE3MjExMDI3NzUsImV4cCI6MTcyMTEzODc3NSwiaWF0IjoxNzIxMTAyNzc1LCJqdGkiOiI1OTExNzgyZWYwZjk0MzBhOGRlYTE2NjI5OGQzZjkzZiIsImVtYWlsIjoiVHp1LVdlaS5Uc2FpQHNhcy5jb20iLCJyZXZfc2lnIjoiZDJmY2RhNjMiLCJjaWQiOiJzYXMuY2xpIn0.ieWbKk_3y6Y5zTCgbna98XrIAxvEVaPRfWLpoxtv7xag5xpsx_h9O8E2sZAj1EoEhZpJ7NutqTcmtGeiA8OS0ik5k7p-f2sXS-CMhCZKXiYEwZT22OEBpgSYJPzCOU1aK1re6HkhqwxHaX7vVXRzZux7FbnzOCR1al-FmgaIF7R1GJjvkp-4vsnZGliV8BpXrCku5OQ7WCjp66FILLbj_gRnxbwkGX_V3n2_aIhvvkE--wnoUnf1R4atq6P8zeqIMuaG6SNu7qanB5FSYyk6ye_uRLF7EwQQJ8xzqe_ciqiSNqXGI8whCZOjRdkXYQ-MR_R3NbgAkruh9XSS3SW5TA"
+%mend;
+
+
+/****** Registering the Model ******/
+*  create a new MM project and register the model ;
+proc registermodel 
+      name = "Bank GB"
+      description = "Bank Gradient Boosting Astore Model"
+      data = bank_train
+      algorithm = GRADBOOST
+      function = CLASSIFICATION
+      server = "https://apgtps2demo.gtp.unx.sas.com"
+      oauthtoken = "myTokenName"
+      replace;
+    project name="InnoSyd2024";
+    astoremodel store = "/workspaces/myfolder/PythonInno/gbstore.sasast";
+    target Status / level=binary event="1";
+    assessment;
+run;
+
+
+
+*  register to an existing MM project ;
+proc registermodel 
+      name = "Bank RF"
+      description = "Bank Random Forest Astore Model"
+      data = bank_train
+      algorithm = FOREST
+      function = CLASSIFICATION
+      server = "https://apgtps2demo.gtp.unx.sas.com"
+      oauthtoken = "myTokenName"
+      replace;
+    project name="InnoSyd2024";
+    astoremodel store = "/workspaces/myfolder/PythonInno/foreststore.sasast";
+    target Status / level=binary event="1";
+    assessment;
+run;
