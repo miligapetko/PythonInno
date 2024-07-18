@@ -4,7 +4,7 @@ Step 1: Importing our Data
 
  ******************************************************************************/
 
- title 'SAS Workbench demonstration';
+title 'SAS Workbench demonstration';
 title;
 
 /****** Import file ******/
@@ -60,7 +60,7 @@ proc freq data=bank noprint;
     tables MnthsLastPur / out=freq_mlp;
 run;
 
-footnote italic '*Note that most customers wait 15-21 months before purchasing again.'
+footnote italic '*Note that most customers wait 15-21 months before purchasing again.';
 proc sgplot data=freq_mlp;
     vbar MnthsLastPur / response=Count stat=sum;
     xaxis label='Months Since Last Purchase';
@@ -169,20 +169,13 @@ run;
 proc print data=bank_train (obs=10);
 run; */
 
-/* ***** Keep only the Status variable in bank_test *****
-data bank_test_status_only;
-    set bank_test(keep=Status);
-run;
 
-proc print data=bank_test_status_only (obs=10);
-run; */
-
-/****** Export bank_test to CSV ******/
+/* ***** Export bank_test to CSV *****
 proc export data=bank_test
             outfile="/workspaces/myfolder/PythonInno/bank_test.csv"
             dbms=csv
             replace;
-run;
+run; */
 
 
 /******************************************************************************
@@ -207,7 +200,7 @@ Step 4: Modelling
 
 
 
- /****** Training a Random Forest Model ******/
+/****** Training a Random Forest Model ******/
 title2 'Random Forest on bank_train data';
 proc forest data=bank_train ntrees=100 seed=42;
     target Status / level=nominal;
@@ -293,7 +286,7 @@ title2;
  ******************************************************************************/
 
 
- /* Gradient Boosting */
+/* Gradient Boosting */
 proc gradboost data=bank_train ntrees=100 seed=42;
     target Status / level=nominal;
     input Activity_Status Customer_Value Home_Flag / level=nominal;
@@ -304,7 +297,7 @@ proc gradboost data=bank_train ntrees=100 seed=42;
     savestate rstore=gbstore; /*saves the state of proc gradboost */
  run;
 
- /****** use the ASTORE to score the test data and save the result ******/
+/****** use the ASTORE to score the test data and save the result ******/
 title2 'ASTORE describe and scoring';
 proc astore;
     describe rstore=gbstore;
