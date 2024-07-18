@@ -1,5 +1,33 @@
 /******************************************************************************
 
+### Workbench Workshop: Building AI Using SAS and Python
+
+Today, we are analysing the latest campaign for a financial services firm. The 
+purpose of our project is to build and train a few models which can be used to 
+predict if a customer of the bank will purchase an insurance product from the 
+bank for the current campaign. We will work together to find the best model for 
+the firm.
+
+We are targeting the variable Status as it represents whether a customer did [1]
+or did not [0] purchase a product based on their current campaign.
+
+The bank data set is a sample taken from a large financial services firm 
+accounts. Accounts in the data represent consumers of home equity lines of 
+credit, automobile loans, and other types of short-term to medium-term credit 
+instruments.
+
+
+### Instructions
+
+Follow along as we run a SAS script on Workbench to prepare, explore, model and
+deploy our data.
+
+ ******************************************************************************/
+
+
+
+/******************************************************************************
+
 Step 1: Importing our Data
 
  ******************************************************************************/
