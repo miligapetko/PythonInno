@@ -19,8 +19,8 @@ instruments.
 
 ### Instructions
 
-Follow along as we run a SAS script on Workbench to prepare, explore, model and
-deploy our data.
+Follow along as we run a SAS script on Workbench to prepare, explore, model our
+data and deploy the models.
 
  ******************************************************************************/
 
@@ -43,7 +43,7 @@ run;
 
 /******************************************************************************
 
-Step 2: Exploratory Data Analysis (EDA)
+Step 2: Exploratory Data Analysis (ODS)
 
  ******************************************************************************/
 
@@ -99,6 +99,9 @@ footnote;
 
 
 /* Graph for Customer Value Groups by Activity Status */
+footnote italic "We find that the cutsomer value groups help represent how these 
+cutsomers contribute to the firm's sales. Those in the lowest value group are 
+observed to have the highest activity status.";
 proc sgplot data=bank;
     vbar Customer_Value /  
         group=Activity_Status 
@@ -108,6 +111,7 @@ proc sgplot data=bank;
     yaxis label='Count';
     title 'Customer Value Groups by Activity Status';
 run;
+footnote;
 
 /* Graph for Proportionate AvgSaleLife per Customer by Activity Status */
 proc means data=bank noprint;
@@ -156,13 +160,14 @@ data bank_modified;
 run;
 
 /****** Label Encoding ******/
+* issue: trying to parse Activity Status and Customer Value to numeric;
 proc format;
-    value $activityfmt
+    invalue $act_stat
         'High' = '1'
         'Average' = '2'
         'Low' = '3';
         
-    value $custfmt
+    invalue $cust_val
         'A' = '1'
         'B' = '2'
         'C' = '3'
@@ -172,9 +177,18 @@ run;
 
 data bank_modified;
     set bank_modified;
-    format Activity_Status $activityfmt. Customer_Value $custfmt.;
+    Activity_Status_2=input(put(Activity_Status, $act_stat.), 8.);
+    Customer_Value_2=input(put(Customer_Value, $cust_val.), 8.);
 run;
 
+
+proc contents data=bank_modified;
+run;
+
+proc print data=bank_modified (obs=20);
+run;
+
+*still having issues with the parsing...;
 
 /****** Train/Test Split ******/
 title2 'Create training and test data sets with the PARTITION procedure';
